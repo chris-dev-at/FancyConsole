@@ -13,9 +13,10 @@ namespace FancyConsole
         //make log to file 
 
         public static string Title = "";
+        public static bool ShowOverflow = true;
         public static ConsoleColor ContentBackgroundColor = ConsoleColor.Black;
-        public static ConsoleColor InputBackgroundColor = ConsoleColor.Black;
-        public static ConsoleColor InputForegroundColor = ConsoleColor.Gray;
+        public static ConsoleColor InputBackgroundColor = ConsoleColor.Red;
+        public static ConsoleColor InputForegroundColor = ConsoleColor.Black;
 
         public delegate void FancyChatInput(string text);
         public static event FancyChatInput OnFancyConsoleInput;
@@ -28,11 +29,15 @@ namespace FancyConsole
         private static string current_line;
 
 
+        /// <summary>
+        /// Activate FancyConsole
+        /// </summary>
         public static void Activate()
         {
-            _Active = true;
-            OnFancyConsoleInput += Dummy;
-            new Thread(() =>
+            if (_Active) return;
+            _Active = true; //Stores Activated state
+            OnFancyConsoleInput += Dummy; //make sure event is not empty
+            new Thread(() => //check for size change and adjust
             {
                 int lastWindowHeight = Console.WindowHeight;
                 int lastWindowWidth = Console.WindowWidth;
@@ -46,25 +51,36 @@ namespace FancyConsole
                         lastWindowWidth = Console.WindowWidth;
                         Display();
                     }
-                    Console.SetWindowPosition(0, 0);
+                    try { Console.SetWindowPosition(0, 0);  } catch (Exception) { } //Crashes when Window is rezised aggressivly up and down
                     Thread.Sleep(200);
                 }
             }).Start();
-            new Thread(() =>
+            new Thread(() => //constant ReadLine Loop
             {
                 while (true)
                 {
                     OnFancyConsoleInput(ReadLine());
                 }
             }).Start();
-            Display();
+            Display(); //initial draw
         }
+        /// <summary>
+        /// Deactivate FancyConsole
+        /// </summary>
+        public static void Deactivate()
+        {
+            _Active = false;
+        }
+
         public static void Format(int x, int y, int cursor_size)
         {
             Console.SetWindowSize(x, y);
             Console.CursorSize = 2;
         }
 
+        /// <summary>
+        /// Updates the entire Frame
+        /// </summary>
         public static void Display()
         {
             //presets
@@ -78,6 +94,10 @@ namespace FancyConsole
 
             Console.CursorVisible = true;
         }
+
+        /// <summary>
+        /// Updates the TitleFrame
+        /// </summary>
         public static void DisplayTitle()
         {
             Console.SetCursorPosition(0, 0); //crashes when consoleheigh is 0
@@ -89,6 +109,10 @@ namespace FancyConsole
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Gray;
         }
+
+        /// <summary>
+        /// Updates the ContentFrame
+        /// </summary>
         public static void DisplayContent()
         {
             if (Lines.Count == 0) return;
@@ -97,29 +121,45 @@ namespace FancyConsole
             Console.BackgroundColor = ContentBackgroundColor;
 
             LinkedListNode<string> lastLine = Lines.First;
-            for (int i = 0; i < Console.WindowHeight - 3; i++)
+            for (int i = 0; i < Console.WindowHeight - 2 - content_start; i++) //-1 for update / -1 for Input / -1 for Title(if exists)
             {
                 if (lastLine.Next != null)
                     lastLine = lastLine.Next;
             }
-
+            string output = "";
+            Console.SetCursorPosition(0, 1);
             for (int i = content_start; i < Console.WindowHeight - 1; i++)
             {
-                if (lastLine != null)
+                //Yes its ugly. also its 4:46am so leave me alone man :(
+                if(lastLine != null)
                 {
-                    Console.SetCursorPosition(0, i);
-                    Console.Write(lastLine.Value);
-                    PadLine(lastLine.Value, ContentBackgroundColor);
+                    if(lastLine.Value.Length <= Console.WindowWidth || ShowOverflow) //normal output with Overflow
+                    {
+                        output += lastLine.Value;
+                        output += PadRight("", (Console.WindowWidth - lastLine.Value.Length), ' ');
+                        if(lastLine.Value.Length > Console.WindowWidth) //Remove Red filling when Text automaticly overflows
+                            output += PadRight("", Console.WindowWidth-(lastLine.Value.Length%Console.WindowWidth), ' ');
+                        output += "\n";
+                    }
+
+                    if (lastLine.Value.Length > Console.WindowWidth && !ShowOverflow) //output without Overflow
+                        output += lastLine.Value.Substring(0, Console.WindowWidth - 3) + " >>\n"; //-3 for Marking
+                    
+                    lastLine = lastLine.Previous;
                 }
                 else
                 {
-                    PadLine(0, ContentBackgroundColor);
+                    output += PadRight("", Console.WindowWidth, ' ') + "\n";
                 }
-                if (lastLine != null)
-                    lastLine = lastLine.Previous;
             }
+            Console.Write(output);
+            output = null;
             Console.BackgroundColor = ConsoleColor.Black;
         }
+
+        /// <summary>
+        /// Updates the InputFrame
+        /// </summary>
         public static void DisplayInput()
         {
             Console.ForegroundColor = InputForegroundColor;
@@ -130,10 +170,20 @@ namespace FancyConsole
             Console.Write(Input_Prefix);
         }
 
+        /// <summary>
+        /// Extension of PadLine(Int32, ConsoleColor) used for padding after finishing writing a string
+        /// </summary>
+        /// <param name="line_content">Written Content</param>
+        /// <param name="color">The Background Color</param>
         private static void PadLine(string line_content, ConsoleColor color = ConsoleColor.Black)
         {
             PadLine(line_content.Length, color);
         }
+        /// <summary>
+        /// Creates Spaces " " with a given Color
+        /// </summary>
+        /// <param name="charlength">The Length of Spaces</param>
+        /// <param name="color">The Background Color</param>
         private static void PadLine(int charlength, ConsoleColor color = ConsoleColor.Black)
         {
             Console.BackgroundColor = color;
@@ -145,21 +195,34 @@ namespace FancyConsole
             Console.Write(tmp);
             //Console.BackgroundColor = ConsoleColor.Black;
         }
-
-        /*public static void Write(string text="")
+        private static string PadRight(string text, int num, char c) //prevent crashing when num is negative
         {
-            //add splitting when \n contained
-            current_line += text;
-            Lines.First.Value = current_line;
-        }*/
+            if (num < 0) return text;
+            return text.PadRight(num, ' ');
+        }
 
-        public static void WriteLine(string text = "")
+            /*public static void Write(string text="") TODO
+            {
+                //add splitting when \n contained
+
+            }*/
+
+            /// <summary>
+            /// Writes a new Line of Text in the ContentWindow. Requires a redraw to Display (FancyConsole.Display())
+            /// </summary>
+            /// <param name="text"></param>
+            public static void WriteLine(string text = "")
         {
             current_line += text;
             Lines.AddFirst(current_line);
             current_line = null;
         }
-        private static string ReadLine()
+
+        /// <summary>
+        /// Requesting Input in Input Section
+        /// </summary>
+        /// <returns>The Input</returns>
+        private static string ReadLine() //TODO: replace with ReadKey
         {
             string text = Console.ReadLine();
             Console.SetWindowPosition(0, 0);
