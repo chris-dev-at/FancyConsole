@@ -11,17 +11,36 @@ namespace FancyConsole
     public static class FancyConsole
     {
         //make log to file 
-
-        public static string Title = "";
         public static bool ShowOverflow = true;
+        public static bool UpdateContentAfterWrite = true;
+        public static string Input_Prefix = "";
+        public static ConsoleColor TitleBackgroundColor = ConsoleColor.Gray;
+        public static ConsoleColor TitleForegroundColor = ConsoleColor.Black;
         public static ConsoleColor ContentBackgroundColor = ConsoleColor.Black;
-        public static ConsoleColor InputBackgroundColor = ConsoleColor.Red;
-        public static ConsoleColor InputForegroundColor = ConsoleColor.Black;
+        public static ConsoleColor ContentForegroundColor = ConsoleColor.Gray;
+        public static ConsoleColor InputBackgroundColor = ConsoleColor.Black;
+        public static ConsoleColor InputForegroundColor = ConsoleColor.Gray;
 
         public delegate void FancyChatInput(string text);
         public static event FancyChatInput OnFancyConsoleInput;
 
-        public static string Input_Prefix = "> ";
+        /// <summary>
+        /// When changed automatically Updates Title
+        /// </summary>
+        public static string Title
+        {
+            get
+            {
+                return _Title;
+            }
+            set
+            {
+                _Title = value;
+                DisplayTitle();
+            }
+        }
+        private static string _Title = "";
+
         public static bool Active { get { return _Active; } }
         private static bool _Active = false;
 
@@ -52,7 +71,7 @@ namespace FancyConsole
                         Display();
                     }
                     try { Console.SetWindowPosition(0, 0);  } catch (Exception) { } //Crashes when Window is rezised aggressivly up and down
-                    Thread.Sleep(200);
+                    Thread.Sleep(1);
                 }
             }).Start();
             new Thread(() => //constant ReadLine Loop
@@ -101,11 +120,11 @@ namespace FancyConsole
         public static void DisplayTitle()
         {
             Console.SetCursorPosition(0, 0); //crashes when consoleheigh is 0
-            Console.BackgroundColor = ConsoleColor.Gray;
-            Console.ForegroundColor = ConsoleColor.Black;
-            PadLine((Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
-            Console.Write(Title);
-            PadLine((Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
+            Console.BackgroundColor = TitleBackgroundColor;
+            Console.ForegroundColor = TitleForegroundColor;
+            PadLine((_Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
+            Console.Write(_Title);
+            PadLine((_Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Gray;
         }
@@ -117,8 +136,9 @@ namespace FancyConsole
         {
             if (Lines.Count == 0) return;
 
-            int content_start = (Title == "") ? 0 : 1; //reserve Space if there is a Title
+            int content_start = (_Title == "") ? 0 : 1; //reserve Space if there is a Title
             Console.BackgroundColor = ContentBackgroundColor;
+            Console.ForegroundColor = ContentForegroundColor;
 
             LinkedListNode<string> lastLine = Lines.First;
             for (int i = 0; i < Console.WindowHeight - 2 - content_start; i++) //-1 for update / -1 for Input / -1 for Title(if exists)
@@ -127,7 +147,7 @@ namespace FancyConsole
                     lastLine = lastLine.Next;
             }
             string output = "";
-            Console.SetCursorPosition(0, 1);
+            Console.SetCursorPosition(0, content_start);
             for (int i = content_start; i < Console.WindowHeight - 1; i++)
             {
                 //Yes its ugly. also its 4:46am so leave me alone man :(
@@ -153,8 +173,9 @@ namespace FancyConsole
                 }
             }
             Console.Write(output);
-            output = null;
             Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Gray;
+            DisplayInput(); //needs redraw to setup input again
         }
 
         /// <summary>
@@ -211,11 +232,12 @@ namespace FancyConsole
             /// Writes a new Line of Text in the ContentWindow. Requires a redraw to Display (FancyConsole.Display())
             /// </summary>
             /// <param name="text"></param>
-            public static void WriteLine(string text = "")
+        public static void WriteLine(string text = "")
         {
             current_line += text;
             Lines.AddFirst(current_line);
             current_line = null;
+            if (UpdateContentAfterWrite) DisplayContent();
         }
 
         /// <summary>

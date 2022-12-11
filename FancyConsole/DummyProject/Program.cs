@@ -12,6 +12,7 @@ namespace DummyProject
             FancyConsole.FancyConsole.InputBackgroundColor = ConsoleColor.Red;
             FancyConsole.FancyConsole.InputForegroundColor = ConsoleColor.Black;
             FancyConsole.FancyConsole.ShowOverflow = false;
+            FancyConsole.FancyConsole.Input_Prefix = "> ";
             FancyConsole.FancyConsole.Title = "--[FancyConsole]--";
             FancyConsole.FancyConsole.WriteLine("For multiple line outputs");
             FancyConsole.FancyConsole.WriteLine("Use the WriteLine Command");
@@ -21,16 +22,14 @@ namespace DummyProject
             FancyConsole.FancyConsole.WriteLine("--TESTING--");
             FancyConsole.FancyConsole.WriteLine("OVERFLOW TEST: igdfjbnafgsdijp oajsfdoja nfsdojnags fdagdf fgd dgf dfg dfg as rsojbojbsdf onjfds ojnüfa dsonjü fosdnajüa soedfjnü");
 
-            FancyConsole.FancyConsole.Display();
-            while (true)
-            {
-                Thread.Sleep(10000);
-            }
+            //FancyConsole.FancyConsole.Display(); only needed when UpdateContentAfterWrite = false
+
+
             void Input(string text)
             {
                 if (text == "exit") Environment.Exit(0);
                 FancyConsole.FancyConsole.WriteLine(text);
-                FancyConsole.FancyConsole.Display();
+                FancyConsole.FancyConsole.DisplayContent();
             }
         }
     }
