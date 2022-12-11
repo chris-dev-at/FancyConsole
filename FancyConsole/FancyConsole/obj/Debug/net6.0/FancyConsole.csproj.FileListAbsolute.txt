@@ -1,0 +1,12 @@
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\bin\Debug\net6.0\FancyConsole.deps.json
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\bin\Debug\net6.0\FancyConsole.dll
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\bin\Debug\net6.0\FancyConsole.pdb
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.csproj.AssemblyReference.cache
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.AssemblyInfoInputs.cache
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.AssemblyInfo.cs
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.csproj.CoreCompileInputs.cache
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.dll
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\refint\FancyConsole.dll
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\FancyConsole.pdb
+C:\Users\admin\GitHub\public\FancyConsole\FancyConsole\FancyConsole\obj\Debug\net6.0\ref\FancyConsole.dll

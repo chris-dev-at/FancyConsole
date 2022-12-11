@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "DummyProject/1.0.0": {
+        "dependencies": {
+          "FancyConsole": "1.0.0"
+        },
+        "runtime": {
+          "DummyProject.dll": {}
+        }
+      },
+      "FancyConsole/1.0.0": {
+        "runtime": {
+          "FancyConsole.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DummyProject/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "FancyConsole/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
