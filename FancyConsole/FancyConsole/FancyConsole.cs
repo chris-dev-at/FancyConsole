@@ -25,7 +25,7 @@ namespace FancyConsole
         public static event FancyChatInput OnFancyConsoleInput;
 
         /// <summary>
-        /// When changed automatically Updates Title
+        /// When changed automatically Updates Titlea  d
         /// </summary>
         public static string Title
         {
@@ -122,9 +122,9 @@ namespace FancyConsole
             Console.SetCursorPosition(0, 0); //crashes when consoleheigh is 0
             Console.BackgroundColor = TitleBackgroundColor;
             Console.ForegroundColor = TitleForegroundColor;
-            PadLine((_Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
+            PadLine((_Title.Length + Console.WindowWidth) / 2, TitleBackgroundColor);
             Console.Write(_Title);
-            PadLine((_Title.Length + Console.WindowWidth) / 2, ConsoleColor.Gray);
+            PadLine((_Title.Length + Console.WindowWidth) / 2, TitleBackgroundColor);
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.Gray;
         }
